@@ -16,6 +16,25 @@ LEFT_EDGE = LEFT * 0.25 * config.frame_width
 # Python list slice
 class MainScene(Scene):
 
+    def type_number_list(self):
+        """ type text and move cursor to next text. """
+
+        text = Text("numbers = [5, 9, 1, 4, 2]", **FONT)
+        text.to_edge(TOP_EDGE)
+        text.to_edge(LEFT_EDGE)
+        self.cursor.move_to(text[0])
+        
+        self.play(TypeWithCursor(text, self.cursor))
+        self.play(Blink(self.cursor, blinks=2))
+
+        text2 = Text("print(numbers)", **FONT)
+        text2.next_to(text, DOWN, aligned_edge=LEFT)
+        
+        # Move cursor to start of second line
+        self.play(self.cursor.animate.move_to(text2[0]))
+        
+        self.play(TypeWithCursor(text2, self.cursor))
+        self.play(Blink(self.cursor, blinks=2))
     def write_text(self, text):
         text = Text(text, font=CODE_FONT, font_size=32)
         text.to_edge(TOP_EDGE)
