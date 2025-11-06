@@ -5,58 +5,54 @@ config.pixel_width = 1080
 config.frame_height = 16.0
 config.frame_width = 9.0
 
-CODE_FONT = "Iosevka"
+FONT_FAMILY = "Source Code Pro"
 FONT_SIZE = 32
-FONT = dict(font=CODE_FONT, font_size=FONT_SIZE)
 TOP_EDGE = UP * 0.25 * config.frame_height
 LEFT_EDGE = LEFT * 0.25 * config.frame_width
 
 
 class MainScene(Scene):
     def construct(self):
-        s1 = self.type_number_list()
-        # self.bs_text(s1)
+        print("Left", LEFT, "LEFT / 2", LEFT / 2)
+        # config
+        d1 = Line(config.frame_width * LEFT, config.frame_width * RIGHT).to_edge(DOWN)
+        d2 = Line(config.frame_width * LEFT, config.frame_width * RIGHT).to_edge(UP)
+        d3 = Line(config.frame_height * UP, config.frame_height * DOWN).to_edge(LEFT)
+        d4 = Line(config.frame_height * UP, config.frame_height * DOWN).to_edge(RIGHT)
+        self.add(d1)
+        self.add(d2)
+        self.add(d3)
+        self.add(d4)
+
+        # ---------------------------
+        #   Animation (0) - Blinks
+        #----------------------------
+        # Objects
+        cursor = Rectangle(width=.25, height=.5, fill_opacity=1, color="#984936", )
+        # Postions
+        cursor.to_edge(UL)
+        # Animations
+        self.play(Blink(cursor, blinks=3))
 
 
-        # Wait before close the scene
-        self.wait(3)
-
-    def type_number_list(self):
-        # cursor
-        cursor = Rectangle(
-            color = GREY_A,
-            fill_color = GREY_A,
-            fill_opacity = 1.0,
-            height = .5,
-            width = .25,
-        )
-
-        # Text
-        s = "numbers = [5, 9, 1, 4, 2]"
-        text = Text(s, **FONT)
-        text.to_edge(TOP_EDGE)
+        # ---------------------------
+        #   Animation (1) - numbers
+        #----------------------------
+        # Objects
+        text = Text("numbers = [5, 9, 1, 4, 2]", font=FONT_FAMILY, font_size=FONT_SIZE)
+        # Positions
         text.to_edge(LEFT_EDGE)
-
-        cursor.move_to(text[0])
-        
-        # Animation
+        text.to_edge(TOP_EDGE)
+        # Animations
         self.play(TypeWithCursor(text, cursor))
-        self.play(Blink(cursor, blinks=2))
 
-        self.wait()
 
-        self.play(UntypeWithCursor(text, cursor, keep_cursor_y=True, hell="some"))
 
-        
-        self.remove(cursor)
 
-        return text
 
-    def bs_text(self, rec_text):
-        text = Text("hello world")
 
-        self.cursor.move_to(text[0])
 
-        self.wait(1)
-        self.play(UntypeWithCursor(text, self.cursor))
+
+
+        self.wait(3)
 
