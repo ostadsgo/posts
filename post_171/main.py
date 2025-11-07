@@ -23,25 +23,28 @@ class MainScene(Scene):
         )
 
         self.numbers = [5, 9, 1, 4, 2]
-        self.box_group = VGroup()
+        self.box_group = VGroup() 
 
+
+        header = Text("Max / Min")
+        header.to_edge(UP * 2)
         # ----------------------------
         #   Animation () - Blinks
         # ----------------------------
-        self.cursor.to_edge(UP * 4)
+        self.cursor.to_edge(UP * 6)
         self.cursor.to_edge(LEFT * 2)
-        self.play(Blink(self.cursor, blinks=2))
+        self.play(Blink(self.cursor, blinks=2), Write(header))
 
         # ---------------------------
         #   Type numbers
         # ----------------------------
-        text1 = self.create_text("numbers = [5, 9, 1, 4, 2]", n=4)
+        text1 = self.create_text("numbers = [5, 9, 1, 4, 2]", n=6)
         self.cursor.move_to(text1[0])
         self.play(TypeWithCursor(text1, self.cursor))
         self.wait(1)
 
         # ---------------------------
-        #   Animation () - squares
+        #   Squares
         # ----------------------------
         self.draw_boxes()
         for box in self.box_group:
@@ -50,9 +53,15 @@ class MainScene(Scene):
         self.wait(1)
 
         # ---------------------------
-        #   Animation () - max
+        #   Move cursor to next line
         # ----------------------------
-        text2 = self.create_text("max(numbers)", n=6)
+        self.play(self.cursor.animate.to_edge([-2, 8, 0]), run_time=0.1)
+        self.play(Blink(self.cursor, Blinks=1))
+
+        # ---------------------------
+        #   Max
+        # ----------------------------
+        text2 = self.create_text("max(numbers)", n=8)
         self.cursor.move_to(text2[0])
         self.play(TypeWithCursor(text2, self.cursor))
         self.wait(1)
@@ -72,9 +81,9 @@ class MainScene(Scene):
         self.play(Blink(self.cursor, Blinks=1))
 
         # ---------------------------
-        #   Animation () - min
+        #    Min
         # ----------------------------
-        text3 = self.create_text("min(numbers)", n=6)
+        text3 = self.create_text("min(numbers)", n=8)
         self.cursor.move_to(text3[0])
         self.play(TypeWithCursor(text3, self.cursor))
         self.wait(1)
