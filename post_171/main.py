@@ -30,7 +30,7 @@ class MainScene(Scene):
         # ----------------------------
         self.cursor.to_edge(UP * 4)
         self.cursor.to_edge(LEFT * 2)
-        self.play(Blink(self.cursor, blinks=3))
+        self.play(Blink(self.cursor, blinks=2))
 
         # ---------------------------
         #   Type numbers
@@ -38,6 +38,7 @@ class MainScene(Scene):
         text1 = self.create_text("numbers = [5, 9, 1, 4, 2]", n=4)
         self.cursor.move_to(text1[0])
         self.play(TypeWithCursor(text1, self.cursor))
+        self.wait(1)
 
         # ---------------------------
         #   Animation () - squares
@@ -46,23 +47,29 @@ class MainScene(Scene):
         for box in self.box_group:
             self.play(GrowFromCenter(box))
         
+        self.wait(1)
+
         # ---------------------------
         #   Animation () - max
         # ----------------------------
         text2 = self.create_text("max(numbers)", n=6)
         self.cursor.move_to(text2[0])
         self.play(TypeWithCursor(text2, self.cursor))
+        self.wait(1)
         
         # pop max item
         self.play(*self.box_shift([1]), *self.box_dim([0, 2, 3, 4]))
+        self.wait(1)
         
         # untype max
         self.cursor.move_to(text2[-1])
         self.play(UntypeWithCursor(text2, self.cursor))
+        self.wait(1)
 
         # Max shift down
         self.play(*self.box_shift([1], direction=DOWN))
         self.play(*self.box_undim())
+        self.play(Blink(self.cursor, Blinks=1))
 
         # ---------------------------
         #   Animation () - min
@@ -70,15 +77,16 @@ class MainScene(Scene):
         text3 = self.create_text("min(numbers)", n=6)
         self.cursor.move_to(text3[0])
         self.play(TypeWithCursor(text3, self.cursor))
+        self.wait(1)
 
         # pop min item
         self.play(*self.box_shift([2]), *self.box_dim([0, 1, 3, 4]))
+        self.wait(2)
 
         # Min shift down
         self.play(*self.box_shift([2], direction=DOWN))
         self.play(*self.box_undim())
-
-        self.wait(3)
+        self.play(Blink(self.cursor, blinks=3))
 
 
 
