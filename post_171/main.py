@@ -5,9 +5,10 @@ config.pixel_width = 1080
 config.frame_height = 16.0
 config.frame_width = 9.0
 
-font_opt = dict(font="Source Code Pro", font_size = 32)
-TOP_EDGE = UP * 0.25 * config.frame_height
-LEFT_EDGE = LEFT * 0.25 * config.frame_width
+font_opt = dict(font="Source Code Pro", font_size = 30)
+UP_EDGE = UP * 0.20 * config.frame_height
+LEFT_EDGE = LEFT * 0.20 * config.frame_width
+DOWN_EDGE = DOWN * 0.20 * config.frame_height
 
 
 class MainScene(Scene):
@@ -22,88 +23,132 @@ class MainScene(Scene):
             color="#984936",
         )
 
-        self.numbers = [5, 9, 1, 4, 2]
+        self.numbers = [5, 2, 9, 4, 6]
+        self.indexes = list(range(len(self.numbers)))
         self.box_group = VGroup() 
 
+        # ----------------------------
+        #   First andimation header, img, cursor
+        # ----------------------------
 
-        header = Text("Max / Min")
-        header.to_edge(UP * 2)
-        # ----------------------------
-        #   Animation () - Blinks
-        # ----------------------------
-        self.cursor.to_edge(UP * 6)
-        self.cursor.to_edge(LEFT * 2)
-        self.play(Blink(self.cursor, blinks=2), Write(header))
+        header = Text("max / min / filter")
+        logo = ImageMobject("g17.png")
+
+        # position
+        header.to_edge(UP_EDGE)
+        logo.to_edge(DOWN_EDGE)
+        logo.scale(0.5)
+        self.cursor.to_edge(UP_EDGE * 2)
+        self.cursor.to_edge(LEFT_EDGE)
+
+        # animation
+        self.play(
+            Blink(self.cursor, blinks=2),
+            FadeIn(header, shift=DOWN),
+            FadeIn(logo, shift=UP),
+            run_time=2,
+            rate_func=smooth
+        )
 
         # ---------------------------
         #   Type numbers
         # ----------------------------
-        text1 = self.create_text("numbers = [5, 9, 1, 4, 2]", n=6)
+        text1 = self.create_text(f"numbers = {self.numbers}", n=2)
         self.cursor.move_to(text1[0])
         self.play(TypeWithCursor(text1, self.cursor))
         self.wait(1)
-
+        
         # ---------------------------
         #   Squares
         # ----------------------------
         self.draw_boxes()
         for box in self.box_group:
-            self.play(GrowFromCenter(box))
-        
-        self.wait(1)
+            self.play(GrowFromCenter(box), run_time=.5)
 
-        # ---------------------------
-        #   Move cursor to next line
-        # ----------------------------
-        self.play(self.cursor.animate.to_edge([-2, 8, 0]), run_time=0.1)
-        self.play(Blink(self.cursor, Blinks=1))
+        self.wait(1)
 
         # ---------------------------
         #   Max
         # ----------------------------
-        text2 = self.create_text("max(numbers)", n=8)
+        text2 = self.create_text("max(numbers)", n=2.5)
         self.cursor.move_to(text2[0])
         self.play(TypeWithCursor(text2, self.cursor))
         self.wait(1)
-        
+
         # pop max item
-        self.play(*self.box_shift([1]), *self.box_dim([0, 2, 3, 4]))
+
+        elements = [max(self.numbers)]
+        pop_indexes = [index for index, element in enumerate(self.numbers) if element in elements]
+        dim_indexes = [index for index, element in enumerate(self.numbers) if element not in elements]
+        self.play(*self.box_shift(pop_indexes), *self.box_dim(dim_indexes))
         self.wait(1)
-        
+
+
         # untype max
         self.cursor.move_to(text2[-1])
-        self.play(UntypeWithCursor(text2, self.cursor))
         self.wait(1)
 
         # Max shift down
-        self.play(*self.box_shift([1], direction=DOWN))
+        self.play(UntypeWithCursor(text2, self.cursor), *self.box_shift(pop_indexes, direction=DOWN))
         self.play(*self.box_undim())
         self.play(Blink(self.cursor, Blinks=1))
 
         # ---------------------------
         #    Min
         # ----------------------------
-        text3 = self.create_text("min(numbers)", n=8)
-        self.cursor.move_to(text3[0])
+        text3 = self.create_text("min(numbers)", n=2.5)
+        self.cursor.move_to(text3[self.numbers.index(min(self.numbers))])
+        self.play(TypeWithCursor(text3, self.cursor))
+        self.wait(1)
+        #
+        # pop min item
+        elements = [min(self.numbers)]
+        pop_indexes = [index for index, element in enumerate(self.numbers) if element in elements]
+        dim_indexes = [index for index, element in enumerate(self.numbers) if element not in elements]
+        self.play(*self.box_shift(pop_indexes), *self.box_dim(dim_indexes))
+        self.wait(1)
+
+        # untype max
+        self.cursor.move_to(text2[-1])
+        self.wait(1)
+
+        # Min shift down
+        self.play(UntypeWithCursor(text3, self.cursor), *self.box_shift(pop_indexes, direction=DOWN))
+        self.play(*self.box_undim())
+        self.play(Blink(self.cursor, blinks=1))
+
+        # ---------------------------
+        #    Map
+        # ----------------------------
+        # type the text
+        text3 = self.create_text("filter(lambda n: n > 5, numbers)", n=2.5)
+        self.cursor.move_to(text3[self.numbers.index(min(self.numbers))])
         self.play(TypeWithCursor(text3, self.cursor))
         self.wait(1)
 
         # pop min item
-        self.play(*self.box_shift([2]), *self.box_dim([0, 1, 3, 4]))
-        self.wait(2)
+        dim_indexes = self.indexes.copy()
+        elements = list(filter(lambda n: n > 5, self.numbers))
+        pop_indexes = [index for index, element in enumerate(self.numbers) if element in elements]
+        dim_indexes = [index for index, element in enumerate(self.numbers) if element not in elements]
+        self.play(*self.box_shift(pop_indexes), *self.box_dim(dim_indexes))
+        self.wait(1)
+
+        # untype max
+        self.cursor.move_to(text2[-1])
+        self.wait(1)
 
         # Min shift down
-        self.play(*self.box_shift([2], direction=DOWN))
+        self.play(UntypeWithCursor(text3, self.cursor), *self.box_shift(pop_indexes, direction=DOWN))
         self.play(*self.box_undim())
-        self.play(Blink(self.cursor, blinks=3))
-
+        self.play(Blink(self.cursor, blinks=1))
 
 
     def create_text(self, s, n):
         text = Text(s, **font_opt)
         # Positions
-        text.to_edge(UP * n)
-        text.to_edge(LEFT * 2)
+        text.to_edge(UP_EDGE * n)
+        text.to_edge(LEFT_EDGE)
         return text
 
     def draw_boxes(self):
