@@ -58,77 +58,96 @@ class MainScene(Scene):
 
 
         # -- pop -- 
-        pop_group = VGroup(Text("numbers.", **font_opt), Text("pop()", color=BLUE, **font_opt))
-        pop_group.arrange(RIGHT, buff=0.1)
-        pop_group.next_to(number_text, DOWN, buff=.5)
-        pop_group.to_edge(LEFT_EDGE)
+        t0 = Text("numbers.", **font_opt)
+        t1 = Text("pop()", color=BLUE, **font_opt)
+        t0.next_to(number_text, DOWN, buff=.5)
+        t0.to_edge(LEFT_EDGE)
+        t1.next_to(t0, RIGHT, buff=.1)
 
-        self.cursor.move_to(pop_group[0].get_left())
-        self.play(TypeWithCursor(pop_group[0], self.cursor))
-        self.cursor.move_to(pop_group[1].get_left())
-        self.play(TypeWithCursor(pop_group[1], self.cursor))
+        self.cursor.move_to(t0.get_left())
+        self.play(TypeWithCursor(t0, self.cursor))
+        self.cursor.move_to(t1.get_left())
+        self.play(TypeWithCursor(t1, self.cursor), )
+        self.wait(1)
 
-        # remove box pop(1)
-        self.play(FadeOut(self.box_group[-1]))
+        # remove box pop()
+        self.play(FadeOut(self.box_group[-1]), number_text.animate.set_opacity(0.3))
         self.box_group.remove(self.box_group[-1])
         self.numbers.pop()
         self.wait(1)
 
+        # -- pop(1) -- 
+        self.remove(t1)
+        t2 = Text("pop(1)", color=BLUE, **font_opt)
+        t2.move_to(t1)
+        self.play(TransformMatchingShapes(t1, t2))
+        self.wait(1)
+
+        # remove box pop(1)
+        self.play(FadeOut(self.box_group[1]))
+        self.box_group.remove(self.box_group[1])
+        self.numbers.pop(1)
+        self.wait(1)
+
+        # reoreder boxes
+        self.play(FadeOut(self.box_group), run_time=.5)
+        self.draw_boxes()
+        self.play(FadeIn(self.box_group), run_time=.2)
+        self.wait(1)
+
+        # -- append --
+        self.remove(t1)
+        self.remove(t2)
+        t3 = Text("append(8)", color=BLUE, **font_opt)
+        t3.next_to(t0, RIGHT, buff=-1.45)
+        self.play(TransformMatchingShapes(t2, t3))
+        self.wait(1)
+
+        # append box
+        sq_1 = Square(side_length=1.0, color=WHITE, fill_color=GREEN, fill_opacity=1.0)
+        sq_1_text = Text("8", **font_opt)
+        box_1 = VGroup(sq_1, sq_1_text)
+        self.box_group.add(box_1)
+        self.numbers.append(8)
+        box_1.next_to(self.box_group, RIGHT, buff=0.3)
+        self.play(FadeIn(box_1))
+        self.wait(1)
 
 
+        # -- insert ---
+        self.remove(t3)
+        t4 = Text("insert(0, 6)", color=BLUE, **font_opt)
+        t4.next_to(t0, RIGHT, buff=-1.5)
+        self.play(TransformMatchingShapes(t3, t4))
+        self.wait(1)
 
+        # insert box
+        sq_2 = Square(side_length=1.0, color=WHITE, fill_color=GREEN, fill_opacity=1.0)
+        sq_2_text = Text("6", **font_opt)
+        box_2 = VGroup(sq_2, sq_2_text)
+        self.box_group.add(box_2)
+        self.numbers.insert(0, 6)
+        box_2.next_to(self.box_group[0], LEFT, buff=0.3)
+        self.play(FadeIn(box_2))
+        self.wait(1)
 
+        # -- remove ---
+        self.remove(t4)
+        t5 = Text("remove(9)", color=BLUE, **font_opt)
+        t5.next_to(t0, RIGHT, buff=-1.45)
+        self.play(TransformMatchingShapes(t4, t5))
+        self.wait(1)
 
+        # remove box with element 9
+        self.play(FadeOut(self.box_group[1]))
+        self.box_group.remove(self.box_group[1])
+        self.numbers.remove(9)
+        self.wait(1)
 
-        # # remove last box
-        # last_box = self.box_group[-1]
-        # self.play(FadeOut(last_box))
-        # self.box_group.remove(last_box)
-        # self.numbers.pop()
-        # self.wait(1)
-        #
-        #
-        # # pop(1)
-        # pop_1_text = Text("1)", **font_opt)
-        # pop_1_text.to_edge(LEFT_EDGE)
-        # pop_1_text.next_to(pop_text, RIGHT, buff=-0.2)
-        # self.play(TypeWithCursor(pop_1_text, self.cursor))
-        # self.wait(1)
-        #
-        # # remove box pop(1)
-        # box_at_1 = self.box_group[1]
-        # self.play(FadeOut(box_at_1))
-        # self.box_group.remove(box_at_1)
-        # self.numbers.pop(1)
-        # self.wait(1)
-        #
-        # # rearrange boxes
-        # self.play(FadeOut(self.box_group), run_time=.3)
-        # self.draw_boxes()
-        # self.play(FadeIn(self.box_group), run_time=.5)
-        #
-        # # -- append -- 
-        #
-        # # remove pop(1)
-        # self.remove(pop_1_text)
-        # self.cursor.move_to(pop_1_text[-1])
-        # self.play(UntypeWithCursor(pop_text[9:], self.cursor))
-        # self.wait(1)
-        #
-        # append_text = Text("append(8)", **font_opt)
-        # append_text.next_to(number_text, DOWN, buff=.5) 
-        # append_text.to_edge(LEFT_EDGE)
-        # append_text.next_to(pop_text, RIGHT, buff=.2)
-        # self.cursor.move_to(pop_text[0])
-        # self.play(TypeWithCursor(append_text, self.cursor))
-        # self.wait(1)
-
-
-
-
-
-        
-
+        # reoreder boxes
+        self.play(FadeOut(self.box_group), run_time=.5)
+        self.draw_boxes()
+        self.play(FadeIn(self.box_group), run_time=.2)
         self.wait(3)
 
 
