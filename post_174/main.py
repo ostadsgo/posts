@@ -176,14 +176,14 @@ class MainScene(Scene):
 
 
         
-        i = len(self.numbers) - 1
+        i = 0
         index_anims = []
         for box in self.box_group:
             box_index = box[0]
             new_index = Text(str(i), font="source code pro", font_size=20, color=GRAY)
             new_index.move_to(box_index.get_center())
             index_anims.append(Transform(box_index, new_index))
-            i -= 1
+            i += 1
 
         self.play(*animations, *index_anims)
         self.wait(3)
